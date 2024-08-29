@@ -1,6 +1,7 @@
 [font=Verdana][size=4][b]Description[/b][/size][/font]
-Simple mod that removes Jager's corps in cafeteria each time you load into the game. 
+Simple mod that removes Jager's corpse in the cafeteria each time you load into the game. 
 When you're the host, the mod should remove the corpse for all players. When you're on someone else’s server, it will make the corpse invisible to you.
+Since v1.2.0 it now removes the corpse in the cafeteria's kitchen as well. But Apron and Chef's Hat spawn is still in tact, also the blood is still there.
 
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
 [size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
@@ -32,5 +33,9 @@ GuiConsoleEnabled = 0[/code]
 Current UE4SS version works well with the game, but it has of a problem that causes the game to crash when you exit it.
 It has nothing to do with the mod and it has no negative impact on the game or your save file, it's just a bit annoying.
 And you might want to delete crash dump ([b].dmp[/b]) files from time to time from your game directory.
+
+[font=Verdana][size=4][b]Disclaimer[/b][/size][/font]
+I played to my strength and made a mod that finds and removes corpses at runtime. Ideally  it should be a ".pak" mod that removes the corpses from the game completely.
+I'd be happy to retire the mod if someone would do it properly.
 
 [b][url=https://github.com/igromanru/JagerCorpseRemover-UE4SS-AF.git]GitHub Page[/url][/b]
