@@ -9,7 +9,7 @@
 ------------------------------
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.0.0"
+ModVersion = "1.0.1"
 
 function GetModInfoPrefix()
     return string.format("[%s v%s]", ModName, ModVersion)
