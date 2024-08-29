@@ -1,5 +1,7 @@
 [font=Verdana][size=4][b]Description[/b][/size][/font]
-Simple mod that removes Jager's corps in cafeteria each time you load into the game. 
+Simple mod that removes Jager's corps in cafeteria each time you load into the game.  
+Currently It's not a visual change, works only in singleplayer or if you're the host.  
+I'll make the corpse invisible for the player if he is not the host in the next patch.
 
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
 [size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
