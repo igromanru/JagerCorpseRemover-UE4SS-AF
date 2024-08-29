@@ -25,21 +25,32 @@ local function GetJagerName()
     return JagerName
 end
 
-LoopAsync(200, function()
-    local humanNPCs = FindAllOf("NarrativeNPC_Human_ParentBP_C")
-    if humanNPCs then
-        for i, humanNPC in ipairs(humanNPCs) do
-            ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
-            local JagerName = GetJagerName()
-            if humanNPC.IsDead and JagerName ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == JagerName then
-                ExecuteInGameThread(function()
-                    humanNPC:K2_DestroyActor()
-                end)
-                return true
+local MainLoopRuns = false
+function StartMainLoop()
+    if not MainLoopRuns then
+        MainLoopRuns = true
+        LoopAsync(1000, function()
+            local humanNPCs = FindAllOf("NarrativeNPC_Human_ParentBP_C")
+            if humanNPCs then
+                for i, humanNPC in ipairs(humanNPCs) do
+                    ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
+                    if humanNPC.IsDead and GetJagerName() ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == GetJagerName() then
+                        ExecuteInGameThread(function()
+                            humanNPC:K2_DestroyActor()
+                        end)
+                        MainLoopRuns = false
+                        return true
+                    end
+                end
             end
-        end
+            return false
+        end)
     end
-    return false
+end
+
+RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:Local_BeginPlay", function(Context)
+    -- local playerCharacter = Context:get()
+    StartMainLoop()
 end)
 
 print(GetModInfoPrefix() .. " Mod loaded successfully")
