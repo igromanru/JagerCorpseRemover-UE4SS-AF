@@ -36,6 +36,8 @@ function StartMainLoop()
                     ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
                     if humanNPC.IsDead and GetJagerName() ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == GetJagerName() then
                         ExecuteInGameThread(function()
+                            humanNPC:SetActorHiddenInGame(true)
+                            humanNPC:SetActorEnableCollision(false)
                             humanNPC:K2_DestroyActor()
                         end)
                         MainLoopRuns = false
