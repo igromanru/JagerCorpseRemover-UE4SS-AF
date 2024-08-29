@@ -1,0 +1,35 @@
+[font=Verdana][size=4][b]Description[/b][/size][/font]
+Simple mod that removes Jager's corps in cafeteria each time you load into the game. 
+
+[font=Verdana][size=4][b]Requirements[/b][/size][/font]
+[size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
+
+[font=Verdana][size=4][b]Manual Installation[/b][/size][/font]
+[size=2]As for now Vortex doesn't support the game, so you have to install the mod manually.[/size]
+1. Download the latest version of RE-UE4SS from it's [url=https://github.com/UE4SS-RE/RE-UE4SS/releases]Release[/url] section. Scroll down to [b]Assets[/b] dropdown (open it) and download the [b]UE4SS_v{version nummber}.zip[/b] (e.g. UE4SS_v3.0.1.zip)
+2. Unzip the content of the zip archive into the following location: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
+[size=2]It should be at the location of the [b]AbioticFactor-Win64-Shipping.exe[/b] !
+For Steam users it might be something like this: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
+3. Now use the [b]Manual Download[/b] button in [i]Files[/i] tab to download the mod as a zip file as well.
+4. Unzip/extract the content of mod's zip ([b]JagerCorpseRemover[/b] folder) into the directory: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\[/i]
+[size=2]Whole mod path should be like this: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\[/i]
+Steam example: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\
+[/i][/size]5. Done.
+
+[font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
+[size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
+1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
+[size=2]e.g. [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
+2. Open [b]UE4SS-settings.ini[/b] with any text editor.
+3. Find following entries and change them as following:
+[code]bUseUObjectArrayCache = false
+GuiConsoleEnabled = 0[/code]
+4. Save the file.
+[size=2]If you still experience performance issues, write a detailed comment what happens, your PC specs and which mods you use.[/size]
+
+[font=Verdana][size=4][b]Known Issues[/b][/size][/font]
+Current UE4SS version works well with the game, but it has of a problem that causes the game to crash when you exit it.
+It has nothing to do with the mod and it has no negative impact on the game or your save file, it's just a bit annoying.
+And you might want to delete crash dump ([b].dmp[/b]) files from time to time from your game directory.
+
+[b][url=https://github.com/igromanru/JagerCorpseRemover-UE4SS-AF.git]GitHub Page[/url][/b]
