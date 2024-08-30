@@ -8,14 +8,14 @@
 -- Don't change code below --
 ------------------------------
 
+local AFUtils = require("AFUtils.AFUtils")
+
 ModName = "JagerCorpseRemover"
-ModVersion = "1.1.1"
+ModVersion = "1.1.2"
+DebugMode = true
+IsModEnabled = true
 
-function GetModInfoPrefix()
-    return string.format("[%s v%s]", ModName, ModVersion)
-end
-
-print(GetModInfoPrefix() .. " Starting mod initialization")
+LogInfo("Starting mod initialization")
 
 local function NearlyEqual(a, b, tolerance)
     tolerance = tolerance or 3 -- Default tolerance
@@ -33,6 +33,7 @@ end
 local JagerCorpseWasRemoved = false
 local function FindAndRemoveJagerCorpse()
     if JagerCorpseWasRemoved then return true end
+    LogDebug("FindAndRemoveJagerCorpse: Search Tick")
 
     ---@type ANarrativeNPC_Human_ParentBP_C[]?
     local humanNPCs = FindAllOf("NarrativeNPC_Human_ParentBP_C")
@@ -40,6 +41,7 @@ local function FindAndRemoveJagerCorpse()
         for i, humanNPC in ipairs(humanNPCs) do
             ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
             if humanNPC.IsDead and GetJagerName() ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == GetJagerName() then
+                LogDebug("Found dead Jager, remove")
                 ExecuteInGameThread(function()
                     humanNPC:SetActorHiddenInGame(true)
                     humanNPC:SetActorEnableCollision(false)
@@ -57,6 +59,7 @@ local KitchenCorpseLocation = { X = -16577.186722, Y = 11621.483725, Z = 9.99999
 local KitchenCorpseWasRemoved = false
 local function FindAndRemoveKitchenCorpse()
     if KitchenCorpseWasRemoved then return true end
+    LogDebug("FindAndRemoveKitchenCorpse: Search Tick")
 
     ---@type ASkeletalMeshActor[]?
     local skeletalMeshActors = FindAllOf("SkeletalMeshActor")
@@ -64,6 +67,7 @@ local function FindAndRemoveKitchenCorpse()
         for i, actor in ipairs(skeletalMeshActors) do
             local location = actor:K2_GetActorLocation()
             if NearlyEqual(location.X, KitchenCorpseLocation.X) and NearlyEqual(location.Y, KitchenCorpseLocation.Y) and NearlyEqual(location.Z, KitchenCorpseLocation.Z) then
+                LogDebug("Found kitchen corpse, remove")
                 ExecuteInGameThread(function()
                     actor:SetActorHiddenInGame(true)
                     actor:SetActorEnableCollision(false)
@@ -81,20 +85,7 @@ end
 local function Reset()
     JagerCorpseWasRemoved = false
     KitchenCorpseWasRemoved = false
-end
-
-
-local function TryRegisterHook(UFunctionName, Callback, OutHookIds)
-    if not UFunctionName or not Callback then return false end
-
-    local uFunction = StaticFindObject(UFunctionName)
-    if uFunction and uFunction:IsValid() then
-        OutHookIds = OutHookIds or {}
-        OutHookIds.PreId, OutHookIds.PostId = RegisterHook(UFunctionName, Callback)
-        return true
-    end
-
-    return false
+    LogDebug("Reset: Search")
 end
 
 local Local_BeginPlayWasHooked = false
@@ -114,4 +105,4 @@ LoopAsync(1000, function()
     return false
 end)
 
-print(GetModInfoPrefix() .. " Mod loaded successfully")
+LogInfo("Mod loaded successfully")
