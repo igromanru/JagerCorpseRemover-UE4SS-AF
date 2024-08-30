@@ -9,7 +9,7 @@
 ------------------------------
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.1.0"
+ModVersion = "1.1.1"
 
 function GetModInfoPrefix()
     return string.format("[%s v%s]", ModName, ModVersion)
@@ -78,21 +78,40 @@ local function FindAndRemoveKitchenCorpse()
     return KitchenCorpseWasRemoved
 end
 
-LoopAsync(1000, function()
-    FindAndRemoveJagerCorpse()
-    FindAndRemoveKitchenCorpse()
-
-    return false
-end)
-
 local function Reset()
     JagerCorpseWasRemoved = false
     KitchenCorpseWasRemoved = false
 end
 
-RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:Local_BeginPlay", function(Context)
-    -- local playerCharacter = Context:get()
-    Reset()
+
+local function TryRegisterHook(UFunctionName, Callback, OutHookIds)
+    if not UFunctionName or not Callback then return false end
+
+    local uFunction = StaticFindObject(UFunctionName)
+    if uFunction and uFunction:IsValid() then
+        OutHookIds = OutHookIds or {}
+        OutHookIds.PreId, OutHookIds.PostId = RegisterHook(UFunctionName, Callback)
+        return true
+    end
+
+    return false
+end
+
+local Local_BeginPlayWasHooked = false
+local function HookLocal_BeginPlay()
+    if not Local_BeginPlayWasHooked then
+        Local_BeginPlayWasHooked = TryRegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:Local_BeginPlay", function(Context)
+            Reset()
+        end)
+    end
+end
+
+LoopAsync(1000, function()
+    HookLocal_BeginPlay()
+    FindAndRemoveJagerCorpse()
+    FindAndRemoveKitchenCorpse()
+
+    return false
 end)
 
 print(GetModInfoPrefix() .. " Mod loaded successfully")
