@@ -11,7 +11,7 @@
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.1.2"
+ModVersion = "1.1.3"
 DebugMode = true
 IsModEnabled = true
 
@@ -30,15 +30,12 @@ local function GetJagerName()
     return JagerName
 end
 
-local JagerCorpseWasRemoved = false
+---@return boolean FoundAndRemoved
 local function FindAndRemoveJagerCorpse()
-    if JagerCorpseWasRemoved then return true end
-    LogDebug("FindAndRemoveJagerCorpse: Search Tick")
-
     ---@type ANarrativeNPC_Human_ParentBP_C[]?
     local humanNPCs = FindAllOf("NarrativeNPC_Human_ParentBP_C")
     if humanNPCs then
-        for i, humanNPC in ipairs(humanNPCs) do
+        for _, humanNPC in ipairs(humanNPCs) do
             ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
             if humanNPC.IsDead and GetJagerName() ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == GetJagerName() then
                 LogDebug("Found dead Jager, remove")
@@ -47,24 +44,20 @@ local function FindAndRemoveJagerCorpse()
                     humanNPC:SetActorEnableCollision(false)
                     humanNPC:K2_DestroyActor()
                 end)
-                JagerCorpseWasRemoved = true
-                break
+                return true
             end
         end
     end
-    return JagerCorpseWasRemoved
+    return false
 end
 
 local KitchenCorpseLocation = { X = -16577.186722, Y = 11621.483725, Z = 9.999998 }
-local KitchenCorpseWasRemoved = false
+---@return boolean FoundAndRemoved
 local function FindAndRemoveKitchenCorpse()
-    if KitchenCorpseWasRemoved then return true end
-    LogDebug("FindAndRemoveKitchenCorpse: Search Tick")
-
     ---@type ASkeletalMeshActor[]?
     local skeletalMeshActors = FindAllOf("SkeletalMeshActor")
     if skeletalMeshActors then
-        for i, actor in ipairs(skeletalMeshActors) do
+        for _, actor in ipairs(skeletalMeshActors) do
             local location = actor:K2_GetActorLocation()
             if NearlyEqual(location.X, KitchenCorpseLocation.X) and NearlyEqual(location.Y, KitchenCorpseLocation.Y) and NearlyEqual(location.Z, KitchenCorpseLocation.Z) then
                 LogDebug("Found kitchen corpse, remove")
@@ -73,36 +66,55 @@ local function FindAndRemoveKitchenCorpse()
                     actor:SetActorEnableCollision(false)
                     actor:K2_DestroyActor()
                 end)
-                KitchenCorpseWasRemoved = true
-                break
+                return true
             end
         end
     end
 
-    return KitchenCorpseWasRemoved
+    return false
 end
 
-local function Reset()
-    JagerCorpseWasRemoved = false
-    KitchenCorpseWasRemoved = false
-    LogDebug("Reset: Search")
-end
 
-local Local_BeginPlayWasHooked = false
-local function HookLocal_BeginPlay()
-    if not Local_BeginPlayWasHooked then
-        Local_BeginPlayWasHooked = TryRegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:Local_BeginPlay", function(Context)
-            Reset()
+local IsJagerLoopRunning = false
+local function RunFindAndRemoveJagerCorpseLoop()
+    if not IsJagerLoopRunning then
+        IsJagerLoopRunning = true
+        LoopAsync(800, function()
+            if FindAndRemoveJagerCorpse() then
+                IsJagerLoopRunning = false
+                return true
+            end
+            return false
         end)
     end
 end
 
-LoopAsync(1000, function()
-    HookLocal_BeginPlay()
-    FindAndRemoveJagerCorpse()
-    FindAndRemoveKitchenCorpse()
+local IsKitchenCorpseLoopRunning = false
+local function RunFindAndRemoveKitchenCorpseLoop()
+    if not IsKitchenCorpseLoopRunning then
+        IsKitchenCorpseLoopRunning = true
+        LoopAsync(800, function()
+            if FindAndRemoveKitchenCorpse() then
+                IsKitchenCorpseLoopRunning = false
+                return true
+            end
+            return false
+        end)
+    end
+end
 
-    return false
+RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
+    -- local playerController = Context:get()
+    -- local pawn = NewPawn:get()
+
+    LogDebug("----- [ClientRestart] called -----")
+    local gameState = GetGameState()
+    if gameState and gameState.MatchState == GetNameWaitingToStart() then
+        LogDebug("Starting find and remove loops")
+        RunFindAndRemoveJagerCorpseLoop()
+        RunFindAndRemoveKitchenCorpseLoop()
+    end
+    LogDebug("------------------------------")
 end)
 
 LogInfo("Mod loaded successfully")
