@@ -75,13 +75,16 @@ local function FindAndRemoveKitchenCorpse()
 end
 
 
-local IsJagerLoopRunning = false
+local IsJagerCorpseLoopRunning = false
 local function RunFindAndRemoveJagerCorpseLoop()
-    if not IsJagerLoopRunning then
-        IsJagerLoopRunning = true
+    if IsJagerCorpseLoopRunning then
+        LogDebug("Jager Corpse Loop is already running")
+    else
+        LogDebug("Starting Jager Corpse Loop")
+        IsJagerCorpseLoopRunning = true
         LoopAsync(800, function()
             if FindAndRemoveJagerCorpse() then
-                IsJagerLoopRunning = false
+                IsJagerCorpseLoopRunning = false
                 return true
             end
             return false
@@ -91,7 +94,10 @@ end
 
 local IsKitchenCorpseLoopRunning = false
 local function RunFindAndRemoveKitchenCorpseLoop()
-    if not IsKitchenCorpseLoopRunning then
+    if IsKitchenCorpseLoopRunning then
+        LogDebug("Kitchen Corpse Loop is already running")
+    else
+        LogDebug("Starting Kitchen Corpse Loop")
         IsKitchenCorpseLoopRunning = true
         LoopAsync(800, function()
             if FindAndRemoveKitchenCorpse() then
