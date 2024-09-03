@@ -11,7 +11,7 @@
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.1.3"
+ModVersion = "1.1.2"
 DebugMode = true
 IsModEnabled = true
 
