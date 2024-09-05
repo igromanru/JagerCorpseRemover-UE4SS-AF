@@ -113,14 +113,14 @@ RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, 
     -- local playerController = Context:get()
     -- local pawn = NewPawn:get()
 
-    LogDebug("----- [ClientRestart] called -----")
+    -- LogDebug("----- [ClientRestart] called -----")
     local gameState = GetGameState()
     if gameState and gameState.MatchState == GetNameWaitingToStart() then
         LogDebug("Starting find and remove loops")
         RunFindAndRemoveJagerCorpseLoop()
         RunFindAndRemoveKitchenCorpseLoop()
     end
-    LogDebug("------------------------------")
+    -- LogDebug("------------------------------")
 end)
 
 LogInfo("Mod loaded successfully")
