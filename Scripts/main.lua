@@ -80,6 +80,8 @@ if IsModEnabled then
         FindAndRemoveKitchenCorpse()
         return false
     end)
+else
+    LogInfo("The mod is disabled")
 end
 
 -- local IsJagerCorpseLoopRunning = false
