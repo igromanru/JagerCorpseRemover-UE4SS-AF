@@ -8,17 +8,17 @@
 -- Don't change code below --
 ------------------------------
 
-local AFUtils = require("AFUtils.AFUtils")
+require("AFUtils.AFUtils.BaseUtils")
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.1.2"
+ModVersion = "1.1.3"
 DebugMode = true
 IsModEnabled = true
 
 LogInfo("Starting mod initialization")
 
 local function NearlyEqual(a, b, tolerance)
-    tolerance = tolerance or 3 -- Default tolerance
+    tolerance = tolerance or 2 -- Default tolerance
     return math.abs(a - b) <= tolerance
 end
 
@@ -74,53 +74,60 @@ local function FindAndRemoveKitchenCorpse()
     return false
 end
 
-
-local IsJagerCorpseLoopRunning = false
-local function RunFindAndRemoveJagerCorpseLoop()
-    if IsJagerCorpseLoopRunning then
-        LogDebug("Jager Corpse Loop is already running")
-    else
-        LogDebug("Starting Jager Corpse Loop")
-        IsJagerCorpseLoopRunning = true
-        LoopAsync(800, function()
-            if FindAndRemoveJagerCorpse() then
-                IsJagerCorpseLoopRunning = false
-                return true
-            end
-            return false
-        end)
-    end
+if IsModEnabled then
+    LoopAsync(800, function ()
+        FindAndRemoveJagerCorpse()
+        FindAndRemoveKitchenCorpse()
+        return false
+    end)
 end
 
-local IsKitchenCorpseLoopRunning = false
-local function RunFindAndRemoveKitchenCorpseLoop()
-    if IsKitchenCorpseLoopRunning then
-        LogDebug("Kitchen Corpse Loop is already running")
-    else
-        LogDebug("Starting Kitchen Corpse Loop")
-        IsKitchenCorpseLoopRunning = true
-        LoopAsync(800, function()
-            if FindAndRemoveKitchenCorpse() then
-                IsKitchenCorpseLoopRunning = false
-                return true
-            end
-            return false
-        end)
-    end
-end
+-- local IsJagerCorpseLoopRunning = false
+-- local function RunFindAndRemoveJagerCorpseLoop()
+--     if IsJagerCorpseLoopRunning then
+--         LogDebug("Jager Corpse Loop is already running")
+--     else
+--         LogDebug("Starting Jager Corpse Loop")
+--         IsJagerCorpseLoopRunning = true
+--         LoopAsync(800, function()
+--             if FindAndRemoveJagerCorpse() then
+--                 IsJagerCorpseLoopRunning = false
+--                 return true
+--             end
+--             return false
+--         end)
+--     end
+-- end
 
-RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
-    -- local playerController = Context:get()
-    -- local pawn = NewPawn:get()
+-- local IsKitchenCorpseLoopRunning = false
+-- local function RunFindAndRemoveKitchenCorpseLoop()
+--     if IsKitchenCorpseLoopRunning then
+--         LogDebug("Kitchen Corpse Loop is already running")
+--     else
+--         LogDebug("Starting Kitchen Corpse Loop")
+--         IsKitchenCorpseLoopRunning = true
+--         LoopAsync(800, function()
+--             if FindAndRemoveKitchenCorpse() then
+--                 IsKitchenCorpseLoopRunning = false
+--                 return true
+--             end
+--             return false
+--         end)
+--     end
+-- end
 
-    -- LogDebug("----- [ClientRestart] called -----")
-    local gameState = GetGameState()
-    if gameState and gameState.MatchState == GetNameWaitingToStart() then
-        LogDebug("Starting find and remove loops")
-        RunFindAndRemoveJagerCorpseLoop()
-        RunFindAndRemoveKitchenCorpseLoop()
-    end
-    -- LogDebug("------------------------------")
-end)
+-- RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
+--     -- local playerController = Context:get()
+--     -- local pawn = NewPawn:get()
+
+--     -- LogDebug("----- [ClientRestart] called -----")
+--     local gameState = GetGameState()
+--     if gameState and gameState.MatchState == GetNameWaitingToStart() then
+--         LogDebug("Starting find and remove loops")
+--         RunFindAndRemoveJagerCorpseLoop()
+--         RunFindAndRemoveKitchenCorpseLoop()
+--     end
+--     -- LogDebug("------------------------------")
+-- end)
 
 LogInfo("Mod loaded successfully")
