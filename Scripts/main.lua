@@ -38,7 +38,7 @@ local function FindAndRemoveJagerCorpse()
         for _, humanNPC in ipairs(humanNPCs) do
             ---@cast humanNPC ANarrativeNPC_Human_ParentBP_C
             if humanNPC.IsDead and GetJagerName() ~= NAME_None and humanNPC.NarrativeNPC_ConversationRow.RowName == GetJagerName() then
-                if not humanNPC.bActorIsBeingDestroyed then
+                if not humanNPC.bActorIsBeingDestroyed and not humanNPC.bHidden then
                     LogDebug("Found dead Jager, remove")
                     ExecuteInGameThread(function()
                         humanNPC:SetActorHiddenInGame(true)
@@ -62,7 +62,7 @@ local function FindAndRemoveKitchenCorpse()
         for _, actor in ipairs(skeletalMeshActors) do
             local location = actor:K2_GetActorLocation()
             if NearlyEqual(location.X, KitchenCorpseLocation.X) and NearlyEqual(location.Y, KitchenCorpseLocation.Y) and NearlyEqual(location.Z, KitchenCorpseLocation.Z) then
-                if not actor.bActorIsBeingDestroyed then
+                if not actor.bActorIsBeingDestroyed and not actor.bHidden then
                     LogDebug("Found kitchen corpse, remove")
                     ExecuteInGameThread(function()
                         actor:SetActorHiddenInGame(true)
