@@ -2,6 +2,7 @@
 Simple mod that removes Jager's corpse in the cafeteria each time you load into the game. 
 When you're the host, the mod should remove the corpse for all players. When you're on someone else’s server, it will make the corpse invisible to you.
 Since v1.1.0 it now removes the corpse in the cafeteria's kitchen as well. But Apron and Chef's Hat spawn is still in tact, also the blood is still there.
+Since v1.2.0: Removes Hydroplant Apartments corpses. Can now be configurated in the [i]main.lua[/i]. (See Mod Configuration section below)
 
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
 [size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
@@ -19,12 +20,21 @@ Since v1.1.0 it now removes the corpse in the cafeteria's kitchen as well. But A
 [size=2]Whole mod path should be like this: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\[/i][/size]
 [size=2]Steam example: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\[/i][/size]
 5. Verify that you have installed the mod correctly.
-The mod directory should contain a [b]Scripts[/b] folder an an [b]enabled.txt[/b] file.
+The mod directory should contain a [b]Scripts[/b] folder and an [b]enabled.txt[/b] file.
 [size=2][i](game root directory)\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\Scripts\[/i]
 [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\enabled.txt[/i][/size]
 
-[font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
-[size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
+[font=Verdana][size=4][b]Mod Configuration[/b][/size][/font]
+[size=2]All the configurations are happening in the [b]main.lua[/b][/size]
+1. Navigate into mod's directory->scripts to find the [b]main.lua[/b] file.
+[size=2]It should be under: (game root directory)\AbioticFactor\Binaries\Win64\Mods\JagerCorpseRemover\Scripts\[/size]
+2. Open the [b]main.lua[/b] with Notepad or any other text editor.
+3. Under the [b]Settings[/b] section in the [i]main.lua[/i] you will find a variable for each corpse.
+    Simply change [b]true[/b] to [b]false[/b] if you want to keep a specific corpse.
+4. Don't forget to save the file!
+
+[font=Verdana][size=4][b]Recommended UE4SS settings[/b][/size][/font]
+[size=2]I highly recommend to change these settings to improve performance and reduce crashes.[/size]
 1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
 [size=2]e.g. [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
 2. Open [b]UE4SS-settings.ini[/b] with any text editor.
@@ -32,7 +42,12 @@ The mod directory should contain a [b]Scripts[/b] folder an an [b]enabled.txt[/b
 [code]bUseUObjectArrayCache = false
 GuiConsoleEnabled = 0
 EnableDumping = 0
-[/code]4. Save the file.
+[/code]4. Save the UE4SS-settings.ini.
+5. Navigate into the [b]Mods[/b] directory and open [b]mods.txt[/b] with a text editor
+6. Disable following mods by setting the value behind ":" to 0:
+[code]BPModLoaderMod : 0
+BPML_GenericFunctions : 0[/code]
+7. Save the file
 [size=2]If you still experience performance issues, write a detailed comment what happens, your PC specs and which mods you use.[/size]
 
 [font=Verdana][size=4][b]Known Issues[/b][/size][/font]
