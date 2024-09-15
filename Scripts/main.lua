@@ -29,6 +29,8 @@ LogInfo("Starting mod initialization")
 ---@param Locations FVector[]
 ---@return boolean Removed # true if the actor was removed
 local function FindAndRemoveActor(ShortActorClassName, Locations)
+    if not ShortActorClassName or not Locations or #Locations < 1 then return false end
+
     local anActorWasRemoved = false
     local actorInstances  = FindAllOf(ShortActorClassName) ---@type AActor[]?
     if actorInstances and #actorInstances > 0 then
@@ -54,17 +56,31 @@ local function FindAndRemoveActor(ShortActorClassName, Locations)
     return anActorWasRemoved
 end
 
+local CharacterCorpseHumanLocations = {}
+if RemoveHydroplantSecuritySoldierCorpse then
+    table.insert(CharacterCorpseHumanLocations, FVector(-50725.972968, 8032.569451, 1336.949190))
+end
+if RemoveHydroplantSecurityScientistCorpse then
+    table.insert(CharacterCorpseHumanLocations, FVector(-48337.985612, 8504.925779, 1230.139829))
+end
+
 if IsModEnabled then
     LoopAsync(1000, function()
         local playerController = AFUtils.GetMyPlayerController()
         if playerController then
             local activeLevelName = playerController.ActiveLevelName:ToString()
             if activeLevelName == "Facility_Office1" then
-                FindAndRemoveActor("NarrativeNPC_Human_ParentBP_C", { FVector(-14416.694983, 12571.883403, 98.000005) })
-                FindAndRemoveActor("SkeletalMeshActor", { FVector(-16577.186722, 11621.483725, 9.999998) })
+                if RemoveJagerCorpse then
+                    FindAndRemoveActor("NarrativeNPC_Human_ParentBP_C", { FVector(-14416.694983, 12571.883403, 98.000005) })
+                end
+                if RemoveKitchenCorpse then
+                    FindAndRemoveActor("SkeletalMeshActor", { FVector(-16577.186722, 11621.483725, 9.999998) })
+                end
             elseif activeLevelName == "Facility_Dam" or activeLevelName == "Facility_Dam_Waterfall" then
-                FindAndRemoveActor("CharacterCorpse_MonsterGeneric_C", { FVector(-50331.309412, 6731.079142, 1337.126070) })
-                FindAndRemoveActor("CharacterCorpse_Human_BP_C", { FVector(-50725.972968, 8032.569451, 1336.949190), FVector(-48337.985612, 8504.925779, 1230.139829) })
+                if RemoveHydroplantSecurityExorCorpse then
+                    FindAndRemoveActor("CharacterCorpse_MonsterGeneric_C", { FVector(-50331.309412, 6731.079142, 1337.126070) })
+                end
+                FindAndRemoveActor("CharacterCorpse_Human_BP_C", CharacterCorpseHumanLocations)
             end
         end
         return false
