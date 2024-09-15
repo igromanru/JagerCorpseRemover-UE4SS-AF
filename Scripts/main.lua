@@ -25,65 +25,47 @@ IsModEnabled = true
 
 LogInfo("Starting mod initialization")
 
-local function CheckAndRemoveActorAtLocation(Class, Location)
-    if not Class or not Class:IsValid() or not Location or not Location.X then return false end
-
-    local startLocation = VectorToUserdata(Location)
-    startLocation.Z = startLocation.Z + 30
-    local endLocation = VectorToUserdata(Location)
-    endLocation.Z = endLocation.Z - 100
-    local hitActor = LineTraceByChannel(startLocation, endLocation, 3)
-    -- LogInfo("hitActor: " .. type(hitActor))
-    if hitActor then
-        -- LogInfo("CheckAndRemoveActorAtLocation: startLocation: " .. VectorToString(startLocation))
-        -- LogInfo("CheckAndRemoveActorAtLocation: endLocation: " .. VectorToString(endLocation))
-        -- LogInfo("CheckAndRemoveActorAtLocation: target Class: " .. Class:GetFullName())
-        -- LogInfo("CheckAndRemoveActorAtLocation: hitActor Class: " .. hitActor:GetClass():GetFullName())
-        if hitActor:IsA(Class) then
-            if DebugMode then
-                LogInfo("CheckAndRemoveActorAtLocation: Found actor: " .. hitActor:GetFullName())
-            end
-            if not hitActor.bActorIsBeingDestroyed and not hitActor.bHidden then
-                LogDebug("Removing actor")
-                ExecuteInGameThread(function()
-                    hitActor:SetActorHiddenInGame(true)
-                    hitActor:SetActorEnableCollision(false)
-                    hitActor:K2_DestroyActor()
-                end)
-                return true
-            else
-                LogDebug("CheckAndRemoveActorAtLocation: The actor is already hidden or pending for destruction")
+---@param ShortActorClassName string
+---@param Locations FVector[]
+---@return boolean Removed # true if the actor was removed
+local function FindAndRemoveActor(ShortActorClassName, Locations)
+    local anActorWasRemoved = false
+    local actorInstances  = FindAllOf(ShortActorClassName) ---@type AActor[]?
+    if actorInstances and #actorInstances > 0 then
+        for _, actor in ipairs(actorInstances) do
+            local actorLocation = actor:K2_GetActorLocation()
+            for _, location in ipairs(Locations) do
+                if NearlyEqualVector(location, actorLocation) then
+                    if not actor.bActorIsBeingDestroyed and not actor.bHidden then
+                        anActorWasRemoved = true
+                        LogDebug("Removing actor")
+                        ExecuteInGameThread(function()
+                            actor:SetActorHiddenInGame(true)
+                            actor:SetActorEnableCollision(false)
+                            actor:K2_DestroyActor()
+                        end)
+                    else
+                        LogDebug("FindAndRemoveActor: The actor is already hidden or pending for destruction")
+                    end
+                end
             end
         end
     end
-    return false
+    return anActorWasRemoved
 end
 
 if IsModEnabled then
     LoopAsync(1000, function()
         local playerController = AFUtils.GetMyPlayerController()
         if playerController then
-            if RemoveJagerCorpse then
-                CheckAndRemoveActorAtLocation(AFUtils.GetClassNarrativeNPC_Human_ParentBP_C(), FVector(-14416.694983, 12571.883403, 98.0))
+            local activeLevelName = playerController.ActiveLevelName:ToString()
+            if activeLevelName == "Facility_Office1" then
+                FindAndRemoveActor("NarrativeNPC_Human_ParentBP_C", { FVector(-14416.694983, 12571.883403, 98.000005) })
+                FindAndRemoveActor("SkeletalMeshActor", { FVector(-16577.186722, 11621.483725, 9.999998) })
+            elseif activeLevelName == "Facility_Dam" or activeLevelName == "Facility_Dam_Waterfall" then
+                FindAndRemoveActor("CharacterCorpse_MonsterGeneric_C", { FVector(-50331.309412, 6731.079142, 1337.126070) })
+                FindAndRemoveActor("CharacterCorpse_Human_BP_C", { FVector(-50725.972968, 8032.569451, 1336.949190), FVector(-48337.985612, 8504.925779, 1230.139829) })
             end
-            if RemoveKitchenCorpse then
-                CheckAndRemoveActorAtLocation(AFUtils.GetClassSkeletalMeshActor(), FVector(-16577.186722, 11621.483725, 9.999998))
-            end
-            if RemoveHydroplantSecurityExorCorpse then
-                CheckAndRemoveActorAtLocation(AFUtils.GetClassCharacterCorpse_ParentBP(), FVector(-50331.309412, 6731.079142, 1337.126070))
-            end
-            if RemoveHydroplantSecuritySoldierCorpse then
-                CheckAndRemoveActorAtLocation(AFUtils.GetClassCharacterCorpse_Human_BP_C(), FVector(-50714.0, 8050.0, 1435.4))
-            end
-            if RemoveHydroplantSecurityScientistCorpse then
-                CheckAndRemoveActorAtLocation(AFUtils.GetClassCharacterCorpse_Human_BP_C(), FVector(-48353.6, 8486.8, 1335.347729))
-            end
-            -- local activeLevelName = playerController.ActiveLevelName:ToString()
-            -- if activeLevelName == "Facility_Office1" then
-            --     -- FindAndRemoveJagerCorpse()
-            --     -- FindAndRemoveKitchenCorpse()
-            -- elseif activeLevelName == "Facility_Dam" then
-            -- end
         end
         return false
     end)
