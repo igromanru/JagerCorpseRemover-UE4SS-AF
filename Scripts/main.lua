@@ -19,7 +19,7 @@ RemoveHydroplantSecurityScientistCorpse = true
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.2.0"
+ModVersion = "1.2.1"
 DebugMode = true
 IsModEnabled = true
 
@@ -37,7 +37,7 @@ local function FindAndRemoveActor(ShortActorClassName, Locations)
         for _, actor in ipairs(actorInstances) do
             local actorLocation = actor:K2_GetActorLocation()
             for _, location in ipairs(Locations) do
-                if NearlyEqualVector(location, actorLocation) then
+                if NearlyEqualVector(location, actorLocation) and (not actor:IsA(AFUtils.GetClassAbiotic_Character_ParentBP_C()) or actor.IsDead) then
                     if not actor.bActorIsBeingDestroyed and not actor.bHidden then
                         anActorWasRemoved = true
                         LogDebug("Removing actor")
@@ -47,7 +47,7 @@ local function FindAndRemoveActor(ShortActorClassName, Locations)
                             actor:K2_DestroyActor()
                         end)
                     else
-                        LogDebug("FindAndRemoveActor: The actor is already hidden or pending for destruction")
+                        -- LogDebug("FindAndRemoveActor: The actor is already hidden or pending for destruction")
                     end
                 end
             end
