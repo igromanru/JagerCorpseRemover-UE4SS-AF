@@ -19,7 +19,7 @@ RemoveHydroplantSecurityScientistCorpse = true
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "JagerCorpseRemover"
-ModVersion = "1.2.1"
+ModVersion = "1.2.2"
 DebugMode = true
 IsModEnabled = true
 
@@ -67,7 +67,7 @@ end
 if IsModEnabled then
     LoopAsync(1000, function()
         local playerController = AFUtils.GetMyPlayerController()
-        if playerController then
+        if IsValid(playerController) then
             local activeLevelName = playerController.ActiveLevelName:ToString()
             if activeLevelName == "Facility_Office1" then
                 if RemoveJagerCorpse then
